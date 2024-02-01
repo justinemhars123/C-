@@ -1,0 +1,40 @@
+using System;
+
+public class Calcu
+{
+    public static void Main(string[] args)
+    {
+         while(true){
+             
+        Console.Write("Enter num1: ");
+        int num1 = Convert.ToInt32(Console.ReadLine());
+        Console.Write("Enter num2: ");
+        int num2 = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Choose operation:  \n 1. Addition \n 2. Multiplication  \n 3. Division  \n 0. Exit ");
+        int op = Convert.ToInt32(Console.ReadLine());
+        
+            
+            
+        switch (op)
+        {
+            case 1:
+                int sum = num1 + num2;
+                Console.WriteLine("Addition: " + sum);
+                break;
+            case 2:
+                int mul = num1 * num2;
+                Console.WriteLine("Multiplication: " + mul);
+                break;
+            case 3:
+                int div = num1 / num2;
+                Console.WriteLine("Division: " + div);
+                break;
+            default:
+                Console.WriteLine("Invalid operation");
+                Environment.Exit(0);
+                break;
+        }
+        }
+    
+    }
+}
