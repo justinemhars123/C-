@@ -1,0 +1,109 @@
+using System;
+
+namespace MyApplication
+{
+    public class Program
+    {
+        static void Main(string[] args)
+        {
+            while (true)
+            {
+               Console.Write("Enter the size of an array: ");
+            if (int.TryParse(Console.ReadLine(), out int arraySize) && arraySize > 0)
+            {
+                int[] myArray = new int[arraySize];
+
+                Console.WriteLine($"Enter {arraySize} elements:");
+
+                for (int i = 0; i < arraySize; i++)
+                {
+                    Console.Write("");
+                    if (int.TryParse(Console.ReadLine(), out int element))
+                    {
+                        myArray[i] = element;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input. Please enter a valid integer.");
+                        i--;
+                    }
+                }
+
+                    DisplayArrayElements(myArray);
+                    Odd(myArray);
+                    SumOdd(myArray);
+                    Even(myArray);
+                    SumEven(myArray);
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid positive integer.");
+                }
+            }
+        }
+
+        static void DisplayArrayElements(int[] array)
+        {
+            Console.Write("Array elements: ");
+            foreach (int element in array)
+            {
+                Console.Write(element + " ");
+            }
+            Console.WriteLine();
+        }
+
+        static void Odd(int[] array)
+        {
+            Console.Write("Odd Array Elements: ");
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] % 2 != 0)
+                {
+                    Console.Write(array[i] + " ");
+                }
+            }
+        }
+
+        static void SumOdd(int[] array)
+        {
+            int sum = 0;
+           
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] % 2 != 0)
+                {
+                    sum += array[i];
+                }
+            }
+            Console.WriteLine("\nSum of Odd Elements: " + sum);
+        }
+
+     
+        static void Even(int[] array)
+        {
+            Console.Write("Even Elements: ");
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] % 2 == 0)
+                {
+                    Console.Write(array[i] + " ");
+                }
+            }
+        }
+        static void SumEven(int[] array)
+        {
+            int sum = 0;
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] % 2 == 0)
+                {
+                    sum += array[i];
+                }
+            }
+            Console.WriteLine("\nSum of Even Elements: " + sum);
+            
+        }
+    }
+}
