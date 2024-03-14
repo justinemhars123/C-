@@ -1,0 +1,26 @@
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Area of square: " + CalculateSquareArea(5)); // Example: passing side length as 5
+        Console.WriteLine("Area of rectangle: " + CalculateRectangleArea(4, 6)); // Example: passing length as 4 and width as 6
+        Console.WriteLine("Area of circle: " + CalculateCircleArea(3)); // Example: passing radius as 3
+    }
+
+    static double CalculateSquareArea(double sideLength)
+    {
+        return sideLength * sideLength;
+    }
+
+    static double CalculateRectangleArea(double length, double width)
+    {
+        return length * width;
+    }
+
+    static double CalculateCircleArea(double radius)
+    {
+        return Math.PI * radius * radius;
+    }
+}
