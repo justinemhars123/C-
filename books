@@ -1,0 +1,179 @@
+using System;
+using System.Data;
+using System.Data.OleDb;
+using System.Windows.Forms;
+
+namespace dbsyss
+{
+    public partial class Books : Form
+    {
+        private OleDbConnection con;
+        private OleDbDataAdapter adapter;
+        private DataTable booksTable;
+
+        public Books()
+        {
+            InitializeComponent();
+            con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Users\\Admin\\Documents\\db.accdb");
+            adapter = new OleDbDataAdapter();
+            booksTable = new DataTable();
+        }
+
+        private void Books_Load(object sender, EventArgs e)
+        {
+            LoadBooks();
+        }
+
+        private void LoadBooks()
+        {
+            try
+            {
+                con.Open();
+                adapter.SelectCommand = new OleDbCommand("SELECT * FROM Books", con);
+                booksTable.Clear();
+                adapter.Fill(booksTable);
+                dataGridView1.DataSource = booksTable; // Assuming you have a DataGridView named dataGridView1
+            }
+            catch (OleDbException ex)
+            {
+                MessageBox.Show($"Database connection error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+        private void addbtn_Click(object sender, EventArgs e)
+        {
+            string title = titletxtb.Text;
+            string author = authortxtb.Text;
+            string bookId = bookidtxtb.Text;
+
+            if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(author) || string.IsNullOrWhiteSpace(bookId))
+            {
+                MessageBox.Show("Please fill in all fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                con.Open();
+                var command = new OleDbCommand($"INSERT INTO Books (BookID, Title, Author) VALUES (@BookID, @Title, @Author)", con);
+                command.Parameters.AddWithValue("@BookID", bookId);
+                command.Parameters.AddWithValue("@Title", title);
+                command.Parameters.AddWithValue("@Author", author);
+                command.ExecuteNonQuery();
+                MessageBox.Show("Book added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadBooks(); // Refresh the list
+            }
+            catch (OleDbException ex)
+            {
+                MessageBox.Show($"Error adding book: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+        private void editbtn_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a book to edit.", "Edit Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string bookId = dataGridView1.SelectedRows[0].Cells["BookID"].Value.ToString();
+            string title = titletxtb.Text;
+            string author = authortxtb.Text;
+
+            try
+            {
+                con.Open();
+                var command = new OleDbCommand($"UPDATE Books SET Title = @Title, Author = @Author WHERE BookID = @BookID", con);
+                command.Parameters.AddWithValue("@BookID", bookId);
+                command.Parameters.AddWithValue("@Title", title);
+                command.Parameters.AddWithValue("@Author", author);
+                command.ExecuteNonQuery();
+                MessageBox.Show("Book updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadBooks(); // Refresh the list
+            }
+            catch (OleDbException ex)
+            {
+                MessageBox.Show($"Error updating book: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+        private void deletebtn_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a book to delete.", "Delete Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string bookId = dataGridView1.SelectedRows[0].Cells["BookID"].Value.ToString();
+
+            try
+            {
+                con.Open();
+                var command = new OleDbCommand($"DELETE FROM Books WHERE BookID = @BookID", con);
+                command.Parameters.AddWithValue("@BookID", bookId);
+                command.ExecuteNonQuery();
+                MessageBox.Show("Book deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadBooks(); // Refresh the list
+            }
+            catch (OleDbException ex)
+            {
+                MessageBox.Show($"Error deleting book: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+        private void savebtn_Click(object sender, EventArgs e)
+        {
+            // Optionally implement save logic here if needed
+        }
+
+        private void updatebtn_Click(object sender, EventArgs e)
+        {
+            LoadBooks(); // Refresh the book list if needed
+        }
+
+        private void searchtxtb_TextChanged(object sender, EventArgs e)
+        {
+            string searchTerm = searchtxtb.Text;
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                DataView dv = booksTable.DefaultView;
+                dv.RowFilter = $"Title LIKE '%{searchTerm}%' OR Author LIKE '%{searchTerm}%'";
+                dataGridView1.DataSource = dv.ToTable();
+            }
+            else
+            {
+                dataGridView1.DataSource = booksTable; // Reset to full list
+            }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                var selectedRow = dataGridView1.SelectedRows[0];
+                bookidtxtb.Text = selectedRow.Cells["BookID"].Value.ToString();
+                titletxtb.Text = selectedRow.Cells["Title"].Value.ToString();
+                authortxtb.Text = selectedRow.Cells["Author"].Value.ToString();
+            }
+        }
+    }
+}
